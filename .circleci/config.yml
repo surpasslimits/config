@@ -3,6 +3,8 @@ jobs:
   deploy_to_staging:
     docker:
       - image: google/cloud-sdk
+    environment:
+      - PROJECT_IDENTIFICATION: "inscription-dev"
     steps:
       - checkout
       - run:
@@ -13,8 +15,8 @@ jobs:
           name: Install key
           command: |
             echo $SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-            gcloud --quiet config set project $PROJECT_ID
-            gcloud --quiet config set compute/zone $COMPUTE_ZONE
+            gcloud --quiet config set project  ${PROJECT_IDENTIFICATION}
+            gcloud --quiet config set compute/zone ${COMPUTE_ZONE}
             gcloud auth configure-docker
       - run:
           name: Obtain version
@@ -45,4 +47,4 @@ workflows:
       - deploy_to_staging:
           filters:
             branches:
-              only: master
+              only: development
