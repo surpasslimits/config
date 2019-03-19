@@ -52,7 +52,7 @@
                 <version>${maven.jib.version}</version>
                 <configuration>
                     <to>
-                        <image>gcr.io/${env.PROJECT_ID}/${project.artifactId}:${project.version}</image>
+                        <image>gcr.io/${env.PROJECT_IDENTIFICATION}/${project.artifactId}:${project.version}</image>
                     </to>
                 </configuration>
             </plugin>
