@@ -1,0 +1,48 @@
+version: 2
+jobs:
+  deploy_to_staging:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - run:
+          name: Install maven
+          command: |
+            apt-get install -qq -y maven gettext
+      - run:
+          name: Install key
+          command: |
+            echo $SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project $PROJECT_ID
+            gcloud --quiet config set compute/zone $COMPUTE_ZONE
+            gcloud auth configure-docker
+      - run:
+          name: Obtain version
+          command: |
+            echo "export PROJECT_NAME_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}:${project.version}' --non-recursive exec:exec)" >> $BASH_ENV
+            echo "export PROJECT_NAME=$(cut -d':' -f1 <<< $PROJECT_NAME_VERSION)" >> $BASH_ENV
+            echo "export VERSION=$(cut -d':' -f2 <<< $PROJECT_NAME_VERSION)" >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Compile and publish image with Jib
+          command: |
+            mvn compile jib:build -B -DskipTests=true
+      - run:
+          name: Setup Google Cloud SDK
+          command: |
+            gcloud --quiet container clusters get-credentials ${CLUSTER_NAME}
+      - setup_remote_docker
+      - run:
+          name: Deploy to Kubernets
+          command: |
+            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
+            kubectl apply -f ${HOME}/patched_k8s.yml
+            kubectl rollout status deployment/${PROJECT_NAME}
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - deploy_to_staging:
+          filters:
+            branches:
+              only: master
