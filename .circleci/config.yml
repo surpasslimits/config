@@ -12,9 +12,9 @@ jobs:
       - run:
           name: Install key
           command: |
-            echo $SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            echo ${SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set project  ${PROJECT_ID}
-            gcloud --quiet config set compute/zone ${COMPUTE_ZONE}
+            gcloud --quiet config set compute/region ${COMPUTE_REGION}
             gcloud auth configure-docker
       - run:
           name: Obtain version
@@ -30,7 +30,7 @@ jobs:
       - run:
           name: Setup Google Cloud SDK
           command: |
-            gcloud --quiet container clusters get-credentials ${CLUSTER_NAME} --region us-east1 --project inscription-dev
+            gcloud --quiet container clusters get-credentials ${CLUSTER_NAME} --region ${COMPUTE_REGION} --project ${PROJECT_ID}
       - setup_remote_docker
       - run:
           name: Deploy to Kubernets
