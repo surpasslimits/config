@@ -2,13 +2,13 @@ version: 2
 jobs:
   deploy_to_staging:
     docker:
-      - image: google/cloud-sdk
+      - image: google/cloud-sdk:238.0.0
     steps:
       - checkout
       - run:
           name: Install maven
           command: |
-            apt-get install -qq -y maven gettext openjdk
+            apt-get install -qq -y maven gettext
       - run:
           name: Install key
           command: |
