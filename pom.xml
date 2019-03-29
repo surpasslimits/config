@@ -4,7 +4,7 @@
 
     <groupId>com.surpasslimits</groupId>
     <artifactId>config</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -17,7 +17,8 @@
         <url>https://github.com/surpasslimits/config</url>
         <connection>scm:git:git://github.com/surpasslimits/config.git</connection>
         <developerConnection>scm:git:https://github.com/surpasslimits/config.git</developerConnection>
-   </scm>
+     <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>
