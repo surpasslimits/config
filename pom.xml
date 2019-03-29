@@ -4,7 +4,7 @@
 
     <groupId>com.surpasslimits</groupId>
     <artifactId>config</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -14,19 +14,8 @@
     </parent>
 
     <scm>
-        <url>https://github.com/surpasslimits/config</url>
-        <connection>scm:git:git://github.com/surpasslimits/config.git</connection>
         <developerConnection>scm:git:https://github.com/surpasslimits/config.git</developerConnection>
-    </scm>
-
-    <developers>
-        <developer>
-            <email>gcarrillo2006@gmail.com</email>
-            <name>German Carrillo</name>
-            <url>https://github.com/gcarrillo2006</url>
-            <id>gcarrillo2006</id>
-        </developer>
-    </developers>
+   </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,7 +24,6 @@
         <maven.release.version>2.5.3</maven.release.version>
         <maven.jib.version>1.0.2</maven.jib.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
