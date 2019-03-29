@@ -2,9 +2,7 @@ version: 2
 jobs:
   deploy_to_staging:
     docker:
-      - image: google/cloud-sdk
-    environment:
-      - PROJECT_IDENTIFICATION: "inscription-dev"
+      - image: google/cloud-sdk:238.0.0
     steps:
       - checkout
       - run:
@@ -14,14 +12,14 @@ jobs:
       - run:
           name: Install key
           command: |
-            echo $SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-            gcloud --quiet config set project  ${PROJECT_IDENTIFICATION}
-            gcloud --quiet config set compute/zone ${COMPUTE_ZONE}
+            echo ${SERVICE_KEY} | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project  ${PROJECT_ID}
+            gcloud --quiet config set compute/region ${COMPUTE_REGION}
             gcloud auth configure-docker
       - run:
           name: Obtain version
           command: |
-            echo "export PROJECT_NAME_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}:${project.version}' --non-recursive exec:exec)" >> $BASH_ENV
+            export PROJECT_NAME_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}:${project.version}' --non-recursive exec:exec)
             echo "export PROJECT_NAME=$(cut -d':' -f1 <<< $PROJECT_NAME_VERSION)" >> $BASH_ENV
             echo "export VERSION=$(cut -d':' -f2 <<< $PROJECT_NAME_VERSION)" >> $BASH_ENV
             source $BASH_ENV
@@ -32,12 +30,12 @@ jobs:
       - run:
           name: Setup Google Cloud SDK
           command: |
-            gcloud --quiet container clusters get-credentials ${CLUSTER_NAME}
+            gcloud --quiet container clusters get-credentials ${CLUSTER_NAME} --region ${COMPUTE_REGION} --project ${PROJECT_ID}
       - setup_remote_docker
       - run:
           name: Deploy to Kubernets
           command: |
-            echo ${PROJECT_NAME}
+            kubectl config current-context
             envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
             kubectl apply -f ${HOME}/patched_k8s.yml
             kubectl rollout status deployment/${PROJECT_NAME}
@@ -46,6 +44,7 @@ workflows:
   build_and_deploy:
     jobs:
       - deploy_to_staging:
+          context: inscription-dev
           filters:
             branches:
-              only: development
+              only: master

@@ -10,7 +10,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8080
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 apiVersion: apps/v1beta1
@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: ${PROJECT_NAME}
-          image: gcr.io/${PROJECT_ID}/${PROJECT_NAME_VERSION}
+          image: gcr.io/${PROJECT_ID}/${PROJECT_NAME}:${VERSION}
           ports:
             - name: http
               containerPort: 8080
